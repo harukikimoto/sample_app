@@ -1,12 +1,27 @@
-ユーザー一覧
 
-<% @users.each do |user| %>
-    <div class="users-index-item">
-    <div class="user-left">
-    
-    </div>
-    <div class="user-right">
-    <%= link_to(user.name, "/users/#{user.id}") %>
-    </div>
+
+<div class="wrapper mt-wrapper">
+  <% @users.each do |user| %>
+    <% if user.authority == 1 %>
+      <div class="users-index-item">
+          <div class="content">
+                <p><%= link_to(user.name, "/users/#{user.id}") %></p>
+                <% st_time = user.post&.start_time %>
+                <% fn_time = user.post&.finish_time %>
+                <% if st_time == nil && fn_time == nil %>
+                <p>まだ勤怠情報がありません。</p>
+                <%else%>
+                <% st_num = st_time&.strftime("%w").to_i %>
+                <P><%= st_time&.strftime("%Y/%m/%d(#{@weeks[st_num]})") %></p>
+                <p>勤怠 <%= st_time&.strftime("%H:%M") %>〜<%= fn_time&.strftime("%H:%M") %></p>
+                <p>勤務時間 <%= user.post&.working_hour_set %><P>
+                <%= link_to("詳細","/users/#{user.id}") %>
+                <% end %>
+              </div>
+            </div>
+      <% end %>
+  <% end %>
 </div>
-<% end %>
+
+
+  

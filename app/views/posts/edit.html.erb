@@ -1,0 +1,34 @@
+
+
+<div class="wrapper mt-wrapper">
+    <%= form_tag("/posts/#{@post.id}/update") do %>
+        <div class="mb-3">
+            <label class="form-label">出勤時間</label>
+            <input  type="time" name="start_time" value="<%= @post.start_time.strftime("%H:%M") %>" class="form-control">
+        </div>
+        <%= %>
+        <div class="mb-3">
+            <label class="form-label">退勤時間</label>
+            <input  type="time" name="finish_time" value="<%= @post.finish_time.strftime("%H:%M") %>"  class="form-control" >
+        </div>
+        <div class="mb-3">
+            <label class="form-label">休憩時間（分で入力してください）</label>
+            <input type="number" name="break_time" value="<%= @post.break_time %>" class="form-control" >
+        </div>
+        <% if @current_user.authority == 1 %>
+            <div class="mb-3">
+                <label class="form-label">備考</label>
+                <textarea name="comment" class="form-control"><%= @post.comment %></textarea>
+            </div>
+            <% else %>
+            <div class="mb-3">
+                <label class="form-label">管理者コメント</label>
+                <textarea name="owner-comment" class="form-control"><%= @post.owner_comment %></textarea>
+            </div>
+        <% end %>
+        <li class="btn btn-outline-danger">
+            <%= link_to("削除", "/posts/destroy") %>
+        </li>
+        <input type="submit" class="btn btn-primary btn-lg" value="保存">
+    <% end %>
+</div>

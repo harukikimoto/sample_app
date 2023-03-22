@@ -1,14 +1,29 @@
 <% if @error_message %>
-        <div class="form-error">
+        <div class="form-error alert alert-danger">
             <%= @error_message %>
         </div>
         <% end %>
-<%= form_tag("/users/create") do %>
-    <p>ユーザー名</p>
-    <input name="name" value="<%= @user.name %>">
-    <p>メールアドレス</p>
-    <input name="email" value="<%= @user.email %>">
-    <p>パスワード</p>
-    <input type="password" name="password" value="<%= @user.password %>">
-    <input type="submit" value="新規登録">
-<% end %>
+        <div class="wrapper mt-wrapper">
+            <%= form_tag("/users/create") do %>
+            <div class="mb-3">
+                <label class="form-label">名前</label>
+                <input  name="name" value="<%= @user.name %>" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">メールアドレス</label>
+                <input  type="email" name="email" value="<%= @user.email %>"  class="form-control" >
+            </div>
+            <div class="mb-3">
+                <label class="form-label">パスワード</label>
+                <input type="password" name="password" value="<%= @user.password %>" class="form-control" >
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ユーザーなら1、オーナーなら2を入力してください。</label>
+                <input  type="number" name="authority" value="<%= @user.authority %>" class="form-control" min="1" max="2">
+            </div>
+            <input type="submit" class="btn btn-primary btn-lg" value="新規登録">
+            <% end %>
+        </div>
+
+
+    

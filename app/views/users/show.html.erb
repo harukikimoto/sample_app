@@ -1,11 +1,57 @@
-詳細です
 
-<h2>
-    <% if @user.id == @current_user.id %>
-    <img src="<%= "/user_images/#{@user.image_name}" %>">
+
+<div class="wrapper show mt-wrapper">
+
+    <h2><%= @time %><h2>
+
+    <h2>
     <%= link_to(@user.name, "/users/#{@user.id}/edit") %>
-    <% elsif %>
-        <%= @user.name %>
-    <% end %> 
-</h2>
-<p><%= @user.email %></p>
+        <p><%= @user.email %></p>
+    </h2>
+
+    <% sum = 0 %>
+    <% @this_month_posts.each do |post| %>
+        <% sum += post.working_second_set %>
+    <% end %>
+    <%  sum_time = Time.at(sum).utc%>
+    <P>月の合計労働時間 <%= sum_time.strftime("#{sum_time.mday * 24 + sum_time.hour}:#{sum_time.min}") %></p>
+
+
+    <% @this_month_posts.each do |post| %>
+        <% st_time = post&.start_time %>
+        <% fn_time = post&.finish_time %>
+        <% if st_time == nil && fn_time == nil %>
+        <%else%>
+        <div class="content">
+            <% st_num = st_time&.strftime("%w").to_i %>
+                <P class="date"><%= st_time&.strftime("%Y/%m/%d(#{@weeks[st_num]})") %></p>
+                <p>勤怠 <%= st_time&.strftime("%H:%M") %>〜<%= fn_time&.strftime("%H:%M") %></p>
+                <p>勤務時間 <%= post.working_hour_set %><P>
+                <% if post.comment %>
+                    <p>備考 <%= post.comment %></p>
+                <%end%>
+                <% if post.owner_comment %>
+                    <p>オーナーコメント <%= post.owner_comment %></p>
+                <%end%>
+
+                <%if post.finish_time == nil %>
+                    <p>打刻忘れ</p>
+                <% end %>
+
+                <% working_second = post.working_second_set %>
+                <% if 21600 < working_second && working_second < 28800 %>
+                    <%if post.break_time == nil || (post.break_time * 60) < 2700 %>
+                        <p>過労</p>
+                    <% end %>
+                <% end %>
+                <%if working_second > 28800 %>
+                    <%if post.break_time == nil || (post.break_time. * 60) < 3600 %>
+                        <p>過労</p>
+                    <%end %>
+                <% end %>
+
+                <%= link_to("編集", "/posts/#{post.id}/edit") %>
+            <%end%>
+        </div>
+    <% end %>
+</div>

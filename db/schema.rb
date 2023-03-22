@@ -10,14 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_14_094039) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_22_052257) do
+  create_table "posts", force: :cascade do |t|
+    t.datetime "start_time"
+    t.datetime "finish_time"
+    t.integer "break_time"
+    t.string "comment"
+    t.string "owner_comment"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.string "password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "image_name"
+    t.boolean "authority_flag", default: false, null: false
+    t.integer "authority"
   end
 
 end

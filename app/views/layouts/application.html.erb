@@ -8,71 +8,140 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-   
+  
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   </head>
 
   <body>
   <header>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-info mt-3 mb-3">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav4" aria-controls="navbarNav4" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-info">
           <div class="header-logo navbar-brand">
             <% if @current_user %>
-              <%= link_to("TweetApp", "/posts/index") %>
+              <% if @current_user.authority == 1%>
+                <%= link_to("Simple Manage", "/posts/new") %>
+              <% else %>
+                <%= link_to("Simple Manage", "/users/index") %>
+              <% end %>
             <% else %>
-              <%= link_to("TweetApp", "/") %>
+              <%= link_to("Simple Manage", "/") %>
             <% end %>
           </div>
           <div class="collapse navbar-collapse justify-content-end">
           <ul class="header-menus navbar-nav">
             <% if @current_user %>
-              <li class="nav-item">
-                <%= link_to(@current_user.name, "/users/#{@current_user.id}") %>
-              </li>
-              <liclass="nav-item">
-                <%= link_to("入力", "/posts/new") %>
-              </li>
-              <li class="nav-item">
-                <%= link_to("詳細", "/posts/:id") %>
-              </li>
-              <li class="nav-item">
+            <li class="nav-item nav-link">
+              <%= link_to(@current_user.name, "/users/#{@current_user.id}/edit") %>
+            </li>
+              <% if @current_user.authority == 1 %>
+                  <li class="nav-item nav-link">
+                    <%= link_to("入力", "/posts/new") %>
+                  </li>
+                  <li class="nav-item nav-link">
+                    <%= link_to("詳細", "/users/#{@current_user.id}") %>
+                  </li>
+                  <% else %>
+                  <li class="nav-item nav-link">
+                    <%= link_to("ユーザー一覧", "/users/index") %>
+                  </li>
+                  
+                <% end %>
+              <li class="nav-item btn-danger btn-sm">
                 <%= button_to("ログアウト", "/logout", method: :post) %>
               </li>
+              
             <% else %>
-              <li class="nav-item">
+              <li class="nav-item btn btn-outline-primary btn-lg">
                 <%= link_to("新規登録", "/signup") %>
               </li>
-              <li class="nav-item">
+              <li class="nav-item btn btn-primary btn-lg">
                 <%= link_to("ログイン", "/login") %>
               </li>
             <% end %>
           </ul>
           </div>
       </nav>    
+      <% if flash[:notice] %>
+        <div class="flash alert alert-primary">
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
     </header>
 
 
-    <header>
-  </header>
-
-
-
-  <% if flash[:notice] %>
-    <div class="flash">
-      <%= flash[:notice] %>
-    </div>
-  <% end %>
 
     <%= yield %>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
+    <script>
+        document.querySelectorAll('.nav-link a').forEach(link => {
+        if(link.href === window.location.href){
+          link.setAttribute('aria-current', 'page')
+        }
+      })
+
+      $(function(){
+        $('.flash').fadeOut(2000);  
+      });
+
+
+    function set2fig(num) {
+        var ret;
+        if( num < 10 ) { ret = "0" + num; }
+        else { ret = num; }
+        return ret;
+    }
+    function showClock2() {
+        var nowTime = new Date();
+        var nowHour = set2fig( nowTime.getHours() );
+        var nowMin  = set2fig( nowTime.getMinutes() );
+        var nowSec  = set2fig( nowTime.getSeconds() );
+        var msg = nowHour + ":" + nowMin + ":" + nowSec;
+        document.getElementById("RealtimeClockArea2").innerHTML = msg;
+    }
+    setInterval('showClock2()',1000);
+
+
+      $(function() {
+        $('.start-form').submit(function() {
+            $('.start-btn').prop( 'disabled', true )
+            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', false )
+            $('.change-btn').css('pointer-events', 'auto').removeAttr('tabindex', -1);
+        });
+        $('.finish-form').submit(function() {
+            $('.start-btn').prop( 'disabled', false )
+            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', true )
+            $('.change-btn').css('pointer-events', 'none').attr('tabindex', -1);
+        });
+        $('.break-btn').on(
+            'click', function() {
+            $('.break, .over-lay').addClass('active');
+        });
+        $('.comment-btn').on(
+            'click', function() {
+            $('.comment, .over-lay').addClass('active');
+        });
+        
+        $('.break-form').submit(function() {
+            $('.modal_, .over-lay').removeClass('active');
+        });
+        $('.comment-form').submit(function() {
+            $('.modal_, .over-lay').removeClass('active');
+        });
+
+
+
+        var date = new Date().getDate();
+            $(date).change(function() {
+              $('.start-btn').prop( 'disabled', false )
+            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', true )
+            $('.change-btn').css('pointer-events', 'none').attr('tabindex', -1);
+        });
+    });
+    </script>
   </body>
 </html>

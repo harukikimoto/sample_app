@@ -1,16 +1,23 @@
-編集画面です
+
 
 <% if @error_message %>
-        <div class="form-error">
-            <%= @error_message %>
-        </div>
-        <% end %>
-<%= form_tag("/users/#{@user.id}/update", {multipart: true}) do %>
-    <p>ユーザー名</p>
-    <input name="name" value="<%= @user.name %>">
-    <p>画像</p>
-    <input name="image" type="file">
-    <p>メールアドレス</p>
-    <input name="email" value="<%= @user.email %>">
-    <input type="submit" value="保存">
-<% end %>
+    <div class="form-error alert alert-danger">
+        <%= @error_message %>
+    </div>
+    <% end %>
+
+
+
+    <div class="wrapper mt-wrapper">
+    <%= form_tag("/users/#{@user.id}/update", {multipart: true}) do %>
+    <div class="mb-3">
+        <label  class="form-label">名前</label>
+        <input  name="name" value="<%= @user.name %>"  class="form-control" >
+    </div>
+    <div class="mb-3">
+        <label  class="form-label">メールアドレス</label>
+        <input  name="email" value="<%= @user.email %>"  class="form-control" >
+    </div>
+    <input type="submit" class="btn btn-primary btn-lg" value="保存">
+    <% end %>
+</div>
