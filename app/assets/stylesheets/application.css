@@ -14,6 +14,110 @@
  *= require_self
  */
 
+ /*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    line-height:1;
+}
+
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+/* change colours to suit your needs */
+mark {
+    background-color:#ff9;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+/* change border colour to suit your needs */
+hr {
+    display:block;
+    height:1px;
+    border:0;  
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+/* END Reset CSS */
  * {
     box-sizing: border-box;
 }
@@ -28,6 +132,9 @@ ul, li {
     list-style-type: none;
     padding: 0;
     margin: 0;
+}
+p {
+    margin-bottom: 0;
 }
 a {
     display: block;
@@ -54,9 +161,19 @@ button {
 .flash, .form-error {
     text-align: center;
 }
-/* form {
-    margin-top: 70px;
-} */
+
+section {
+    height: calc(100vh - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.catch-copy {
+    font-size: 80px;
+    text-align: center;
+    color: #0dcaf0;
+    
+}
 
 header nav .nav-item {
     margin-left: 20px;
@@ -77,7 +194,12 @@ header .navbar {
     padding: 20px;
 }
 header .navbar .header-logo a {
-    font-size: 30px;
+    font-size: 38px;
+}
+header .btn-danger.btn-lg {
+    font-size: 20px;
+    margin-left: 20px;
+    padding: 8px;
 }
 header .btn-outline-primary a {
     color: #007bff;
@@ -92,14 +214,18 @@ header .btn-outline-primary a {
     justify-content: center;
     margin-bottom: 30px;
 }
-
+.posts-new-inner .start-btn, .posts-new-inner .finish-btn,
+.posts-new-inner .break-btn,.posts-new-inner .comment-btn, .change-btn a {
+    font-size: 26px;
+}
 .start-form, .break-btn, .btn-outline-warning {
-    margin-right: 30px;
+    margin-right: 100px;
 }
 .posts-new a{
     text-decoration: none;
     line-height: 170px;
 }
+.posts-new
 .posts-new .finish-form {
     margin-top: 0;
 }
@@ -110,7 +236,7 @@ header .btn-outline-primary a {
     align-items: center;
 }
 .posts-new .break-form input[name="break_time"]{
-    height: 100px;
+    height: 35px;
 }
 .posts-new .break-form textarea{
     width: 210px;
@@ -174,7 +300,6 @@ header .btn-outline-primary a {
     display: block;
 }
 .change-btn  {
-    pointer-events: none;
     display: inline-block;
 }
 
@@ -184,10 +309,60 @@ header .btn-outline-primary a {
     text-align: center;
 }
 .content {
-    border: 1px solid #000;
+    position: relative;
+    padding: 10px;
     border-radius: 10px;
     margin-bottom: 20px;
-    background-color: #ddd;
+    background-color: #f2f2f2;
+}
+.alert_mark {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 20px;
+    padding: 4px;
+    display: inline;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+.show .date {
+    font-size: 20px;
+}
+.show p,
+.index p {
+    margin-bottom: 0;
+}
+.link a {
+    color: #0dcaf0;
+    text-decoration: none;
+}
+.name a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+}
+.show .name a {
+    font-size: 50px;
+}
+.show .month,
+.show .time {
+    text-align: center;
+    font-size: 25px;
+}
+.show .month {
+    margin-top: 60px;
+}
+.show .time {
+    margin-bottom: 20px;
+}
+
+.destroy  {
+    color:#dc3545;
+    text-decoration: none;
+}
+.destroy:hover  {
+    color: #fff;
 }
 
 

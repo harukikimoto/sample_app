@@ -18,7 +18,7 @@
                 <input type="password" name="password" value="<%= @user.password %>" class="form-control" >
             </div>
             <div class="mb-3">
-                <label class="form-label">ユーザーなら1、オーナーなら2を入力してください。</label>
+                <label class="form-label">従業員なら1、オーナーなら2を入力してください。</label>
                 <input  type="number" name="authority" value="<%= @user.authority %>" class="form-control" min="1" max="2">
             </div>
             <input type="submit" class="btn btn-primary btn-lg" value="新規登録">

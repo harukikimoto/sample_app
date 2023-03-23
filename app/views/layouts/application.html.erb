@@ -46,9 +46,7 @@
                   </li>
                   
                 <% end %>
-              <li class="nav-item btn-danger btn-sm">
-                <%= button_to("ログアウト", "/logout", method: :post) %>
-              </li>
+                <%= button_to("ログアウト", "/logout", method: :post, class: "btn-danger btn-lg") %>
               
             <% else %>
               <li class="nav-item btn btn-outline-primary btn-lg">
@@ -107,16 +105,6 @@
 
 
       $(function() {
-        $('.start-form').submit(function() {
-            $('.start-btn').prop( 'disabled', true )
-            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', false )
-            $('.change-btn').css('pointer-events', 'auto').removeAttr('tabindex', -1);
-        });
-        $('.finish-form').submit(function() {
-            $('.start-btn').prop( 'disabled', false )
-            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', true )
-            $('.change-btn').css('pointer-events', 'none').attr('tabindex', -1);
-        });
         $('.break-btn').on(
             'click', function() {
             $('.break, .over-lay').addClass('active');
@@ -131,15 +119,6 @@
         });
         $('.comment-form').submit(function() {
             $('.modal_, .over-lay').removeClass('active');
-        });
-
-
-
-        var date = new Date().getDate();
-            $(date).change(function() {
-              $('.start-btn').prop( 'disabled', false )
-            $('.finish-btn, .break-btn, .comment-btn').prop( 'disabled', true )
-            $('.change-btn').css('pointer-events', 'none').attr('tabindex', -1);
         });
     });
     </script>

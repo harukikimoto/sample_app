@@ -1,57 +1,68 @@
 
 
-<div class="wrapper show mt-wrapper">
-
-    <h2><%= @time %><h2>
-
-    <h2>
-    <%= link_to(@user.name, "/users/#{@user.id}/edit") %>
+<div class="show mt-wrapper">
+    <h2 class="name">
+        <%= link_to(@user.name, "/users/#{@user.id}/edit") %>
         <p><%= @user.email %></p>
     </h2>
 
-    <% sum = 0 %>
-    <% @this_month_posts.each do |post| %>
-        <% sum += post.working_second_set %>
-    <% end %>
-    <%  sum_time = Time.at(sum).utc%>
-    <P>月の合計労働時間 <%= sum_time.strftime("#{sum_time.mday * 24 + sum_time.hour}:#{sum_time.min}") %></p>
 
-
-    <% @this_month_posts.each do |post| %>
-        <% st_time = post&.start_time %>
-        <% fn_time = post&.finish_time %>
-        <% if st_time == nil && fn_time == nil %>
-        <%else%>
-        <div class="content">
-            <% st_num = st_time&.strftime("%w").to_i %>
-                <P class="date"><%= st_time&.strftime("%Y/%m/%d(#{@weeks[st_num]})") %></p>
-                <p>勤怠 <%= st_time&.strftime("%H:%M") %>〜<%= fn_time&.strftime("%H:%M") %></p>
-                <p>勤務時間 <%= post.working_hour_set %><P>
-                <% if post.comment %>
-                    <p>備考 <%= post.comment %></p>
-                <%end%>
-                <% if post.owner_comment %>
-                    <p>オーナーコメント <%= post.owner_comment %></p>
+    <% @e.each do |date| %>
+        <div class="month-content">
+            <div class="wrapper">
+                <% this_month_posts = Post.where(user_id: @user.id, updated_at: date.all_month) %>
+                <% this_month_posts  = this_month_posts.reverse%>
+                <p class="month"><%= date.strftime("%Y年%m月") %><p>
+                <% sum = 0 %>
+                <% this_month_posts.each do |post| %>
+                
+                    <% sum += post.working_second_set %>
+                <% end %>
+                <%if sum != 0 %>
+                    <%  sum_time = Time.at(sum).utc%>
+                    <P class="time">合計勤務時間 <%= sum_time.strftime("#{(sum_time.mday - 1) * 24 + sum_time.hour}:#{sum_time.min}") %></p>
+                <%else%>
+                    <p class="time">勤怠記録がありません</p>
                 <%end%>
 
-                <%if post.finish_time == nil %>
-                    <p>打刻忘れ</p>
-                <% end %>
+                <% this_month_posts.each do |post| %>
+                    <% st_time = post&.start_time %>
+                    <% fn_time = post&.finish_time %>
+                    <% if st_time == nil && fn_time == nil %>
+                    <%else%>
+                    <div class="content">
+                        <% st_num = st_time&.strftime("%w").to_i %>
+                            <P class="date"><%= st_time&.strftime("%Y/%m/%d(#{@weeks[st_num]})") %></p>
+                            <p>勤怠:<%= st_time&.strftime("%H:%M") %>〜<%= fn_time&.strftime("%H:%M") %></p>
+                            <p>勤務時間:<%= post.working_hour_set %><P>
+                            <% if post.comment %>
+                                <p>備考:<%= post.comment %></p>
+                            <%end%>
+                            <% if post.owner_comment %>
+                                <p>オーナーコメント:<%= post.owner_comment %></p>
+                            <%end%>
 
-                <% working_second = post.working_second_set %>
-                <% if 21600 < working_second && working_second < 28800 %>
-                    <%if post.break_time == nil || (post.break_time * 60) < 2700 %>
-                        <p>過労</p>
-                    <% end %>
-                <% end %>
-                <%if working_second > 28800 %>
-                    <%if post.break_time == nil || (post.break_time. * 60) < 3600 %>
-                        <p>過労</p>
-                    <%end %>
-                <% end %>
+                            <%if post.finish_time == nil %>
+                                <p class="alert_mark">打刻忘れ</p>
+                            <% end %>
 
-                <%= link_to("編集", "/posts/#{post.id}/edit") %>
-            <%end%>
+                            <% working_second = post.working_second_set %>
+                            <% if 21600 < working_second && working_second < 28800 %>
+                                <%if post.break_time == nil || (post.break_time * 60) < 2700 %>
+                                    <p class="alert_mark">過労</p>
+                                <% end %>
+                            <% end %>
+                            <%if working_second > 28800 %>
+                                <%if post.break_time == nil || (post.break_time. * 60) < 3600 %>
+                                    <p class="alert_mark">過労</p>
+                                <%end %>
+                            <% end %>
+
+                            <p class="link"><%= link_to("編集", "/posts/#{post.id}/edit") %></p>
+                        <%end%>
+                    </div>
+                <% end %>
+            </div>
         </div>
-    <% end %>
+    <%end%>
 </div>

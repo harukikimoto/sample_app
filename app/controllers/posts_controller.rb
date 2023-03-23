@@ -6,34 +6,31 @@ class PostsController < ApplicationController
   
   
   def new
-    @post = Post.new
-    @start_time = params[:start_time]
+    @working_hour = Post.new
   end
 
-  def create
-    @post = Post.new(
-      break_time: params[:break_time],
-      comment: params[:comment]
-    )
-    @post.save
-    flash[:notice] = "休憩しました。"
-
-  end
-
+  
   def register_work_starting_time
-    @working_hour = Post.create(user_id: @current_user.id, start_time: Time.current)
-    flash[:notice] = "出勤しました。"
-    
+    @working_hour = Post.new(
+      user_id: @current_user.id, 
+      start_time: Time.current
+    )
+    @working_hour.save
+    if @working_hour.save
+      flash[:notice] = "出勤しました"
+      redirect_to("/posts/new")
+    end
   end
-
+  
   def register_work_finished_time
-      @current_user_posts = Post.where(user_id: @current_user.id)
-      @working_hour = @current_user_posts.last
-      @working_hour.finish_time = Time.current
-      @working_hour.save
+    @current_user_posts = Post.where(user_id: @current_user.id)
+    @working_hour = @current_user_posts.last
+    @working_hour.finish_time = Time.current
+    if @working_hour.save
       flash[:notice] = "今日も1日お疲れ様でした。"
-
-      @working_second = @working_hour.working_second_set
+      redirect_to("/posts/new")
+    end
+    @working_second = @working_hour.working_second_set
     if 21600 < @working_second && @working_second < 28800
       if @working_hour.break_time == nil || (@working_hour.break_time * 60) < 2700
         UserMailer.with(user: @user).overworked.deliver_later
@@ -45,7 +42,18 @@ class PostsController < ApplicationController
       end
     end
   end
-
+  
+  def create
+    @current_user_posts = Post.where(user_id: @current_user.id)
+    @working_hour = @current_user_posts.last
+    @working_hour.break_time = params[:break_time]
+    @working_hour.comment = params[:comment]
+    
+    if @working_hour.save
+      flash[:notice] = "休憩しました。"
+      redirect_to("/posts/new")
+    end
+  end
   
 
   def edit
@@ -68,7 +76,7 @@ class PostsController < ApplicationController
 
     @working_second = @post.working_second_set
     if 21600 < @working_second && @working_second < 28800
-      if @post.break_time == 0 || (@post.break_time * 60) < 2700
+      if @post.break_time == nil || (@post.break_time * 60) < 2700
         UserMailer.with(user: @user).overworked.deliver_later
       end
     end

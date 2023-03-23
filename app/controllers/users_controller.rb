@@ -10,11 +10,19 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by(id: params[:id])
-    @time = Time.current.strftime("%Y年%m月")
-    @month = params[:month] ? Date.parse(params[:month]) : Time.zone.today
-    @this_month_posts = Post.where(user_id: @user.id, updated_at: @month.all_month)
-    @this_month_posts = @this_month_posts.reverse
-    @this_month_posts.each do |post|
+
+    @e = Enumerator.new do |yielder|
+      head = Date.current
+      tail = @user.created_at
+    
+      while tail <= head
+        yielder << head
+        head = head.prev_month
+      end
+    end
+    
+    @posts = Post.where(user_id: @user.id)
+    @posts.each do |post|
       if post.finish_time == nil
         UserMailer.with(user: @user).forgot_to_press.deliver_later
       end
@@ -29,14 +37,17 @@ class UsersController < ApplicationController
     @user = User.new(
       name: params[:name],
       email: params[:email],
-      image_name: "default_user.jpg",
       password: params[:password],
       authority: params[:authority]
     )
     if @user.save
       UserMailer.with(user: @user).welcome_email.deliver_later
       session[:user_id] = @user.id
-      redirect_to("/users/#{@user.id}")
+      if @user.authority == 1
+        redirect_to("/users/#{@user.id}")
+      else
+        redirect_to("/users/index")
+      end
     else
       render("users/new")
     end
@@ -51,9 +62,6 @@ class UsersController < ApplicationController
     @user.name = params[:name]
     @user.email = params[:email]
     
-    if params[:image]
-      @user.image_name = "#{@user.id}.jpg"
-    end
     
     if @user.save
       flash[:notice] = "ユーザー情報を編集しました"

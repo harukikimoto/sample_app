@@ -9,13 +9,13 @@
             <input type="submit" class=" start-btn btn btn-outline-primary" value="出勤">
         <% end %>
         <%= form_tag("/posts/register_work_finished_time", class: "finish-form") do %>
-            <input type="submit" class="finish-btn btn btn-outline-info" value="退勤" disabled>
+            <input type="submit" class="finish-btn btn btn-outline-info" value="退勤">
         <% end %>
     </div>
 
     <div class="posts-new-inner">
         <div class="over-lay"></div>
-        <button class="break-btn btn btn-outline-success" disabled>
+        <button class="break-btn btn btn-outline-success">
             休憩時間
         </button>
         <div class="modal_ break">
@@ -26,7 +26,7 @@
                 <input type="submit" class="modal-close-btn btn btn-outline-primary" value="保存">
             <% end %>
         </div>
-        <button class="comment-btn btn btn-outline-secondary" disabled>
+        <button class="comment-btn btn btn-outline-secondary">
             備考
         </button>
         <div class="modal_ comment">
@@ -40,10 +40,10 @@
 
     <div class="posts-new-inner">
         <li class="change-btn btn btn-outline-warning">
-            <%= link_to("編集", "/posts/#{@current_user.post.id}/edit") %>
+            <%= link_to("編集", "/posts/#{@current_user.post&.id}/edit") %>
         </li>
         <li class="change-btn btn btn-outline-danger">
-            <%= link_to("削除", "/posts/#{@current_user.post.id}/destroy") %>
+            <%= link_to("削除", "/posts/#{@current_user.post&.id}/destroy") %>
         </li>
     </div>
 </div>

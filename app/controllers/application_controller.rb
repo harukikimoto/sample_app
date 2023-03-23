@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
     
     def set_current_user
         @current_user = User.find_by(id: session[:user_id])
+
     end
 
     def time 
@@ -36,9 +37,8 @@ def authenticate_user
     end
 
     def only_my_user_show_page
-        @post = Post.find_by(user_id: params[:id])
         if @current_user.authority == 1
-            if params[:id].to_i != @current_user.id || @post.user_id != @current_user.id
+            if params[:id].to_i != @current_user.id
                 flash[:notice] = "他のユーザーの情報は閲覧できません。"
                 redirect_to("/users/#{@current_user.id}")
             end
