@@ -3,6 +3,7 @@ class PostsController < ApplicationController
   before_action :authenticate_user, {only: [:new, :create, :edit, :update]}
   before_action :only_user, {only: [:new]}
   before_action :only_my_edit_page, {only: [:edit, :update]}
+  before_action :overworked_mail , {only: [:register_work_finished_time, :update]}
   
   
   def new
@@ -31,16 +32,7 @@ class PostsController < ApplicationController
       redirect_to("/posts/new")
     end
     @working_second = @working_hour.working_second_set
-    if 21600 < @working_second && @working_second < 28800
-      if @working_hour.break_time == nil || (@working_hour.break_time * 60) < 2700
-        UserMailer.with(user: @user).overworked.deliver_later
-      end
-    end
-    if @working_second > 28800
-      if @working_hour.break_time == nil || (@working_hour.break_time * 60) < 3600
-        UserMailer.with(user: @user).overworked.deliver_later
-      end
-    end
+    overworked_mail(@working_second, @working_hour, @user)
   end
   
   def create
@@ -75,16 +67,7 @@ class PostsController < ApplicationController
     end
 
     @working_second = @post.working_second_set
-    if 21600 < @working_second && @working_second < 28800
-      if @post.break_time == nil || (@post.break_time * 60) < 2700
-        UserMailer.with(user: @user).overworked.deliver_later
-      end
-    end
-    if @working_second > 28800
-      if @post.break_time == nil || (@post.break_time * 60) < 3600
-        UserMailer.with(user: @user).overworked.deliver_later
-      end
-    end
+    overworked_mail(@working_second, @post, @user)
 
     if @post.save
       flash[:notice] = "投稿を編集しました"
@@ -99,5 +82,35 @@ class PostsController < ApplicationController
     @post.destroy
     flash[:notice] = "勤怠を削除しました"
     redirect_to("/users/#{@post.user.id}")
+  end
+
+  def overworked_mail (second, post, user)
+    if 21600 < second && second < 28800
+        if post.break_time == nil || (post.break_time * 60) < 2700
+        return UserMailer.with(user: user).overworked.deliver_later
+        end
+    end
+    if second > 28800
+        if post.break_time == nil || (post.break_time * 60) < 3600
+        return UserMailer.with(user: user).overworked.deliver_later
+        end
+    end
+  end
+
+  def only_user
+      if @current_user.authority == 2
+          flash[:notice] = "ユーザーである必要があります。"
+          redirect_to("/users/index")
+      end
+  end
+
+  def only_my_edit_page
+    @post = Post.find_by(id: params[:id])
+    if @current_user.authority == 1
+        if @post.user_id != @current_user.id 
+            flash[:notice] = "他のユーザーの情報は閲覧できません。"
+            redirect_to("/users/#{@current_user.id}")
+        end
+    end
   end
 end

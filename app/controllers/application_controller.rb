@@ -22,43 +22,8 @@ def authenticate_user
     end
     end
 
-    def only_owner
-        if @current_user.authority == 1
-            flash[:notice] = "オーナーである必要があります。"
-            redirect_to("/users/#{@current_user.id}")
-        end
-    end
+    
 
-    def only_user
-        if @current_user.authority == 2
-            flash[:notice] = "ユーザーである必要があります。"
-            redirect_to("/users/index")
-        end
-    end
+    
 
-    def only_my_user_show_page
-        if @current_user.authority == 1
-            if params[:id].to_i != @current_user.id
-                flash[:notice] = "他のユーザーの情報は閲覧できません。"
-                redirect_to("/users/#{@current_user.id}")
-            end
-        end
-    end
-
-    def only_my_edit_page
-        @post = Post.find_by(id: params[:id])
-        if @current_user.authority == 1
-            if @post.user_id != @current_user.id 
-                flash[:notice] = "他のユーザーの情報は閲覧できません。"
-                redirect_to("/users/#{@current_user.id}")
-            end
-        end
-    end
-
-    def forbid_login_user
-        if @current_user 
-        flash[:notice] = "すでにログインしています"
-        redirect_to("/users/#{@current_user.id}")
-        end
-    end
-end
+    

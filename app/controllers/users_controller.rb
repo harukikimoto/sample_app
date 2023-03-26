@@ -10,10 +10,9 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by(id: params[:id])
-
     @e = Enumerator.new do |yielder|
       head = Date.current
-      tail = @user.created_at
+      tail = @user.created_at.prev_month
     
       while tail <= head
         yielder << head
@@ -41,16 +40,16 @@ class UsersController < ApplicationController
       authority: params[:authority]
     )
     if @user.save
-      UserMailer.with(user: @user).welcome_email.deliver_later
-      session[:user_id] = @user.id
-      if @user.authority == 1
-        redirect_to("/users/#{@user.id}")
+        UserMailer.with(user: @user).welcome_email.deliver_later
+        session[:user_id] = @user.id
+          if @user.authority == 1
+            redirect_to("/users/#{@user.id}")
+          else
+            redirect_to("/users/index")
+          end
       else
-        redirect_to("/users/index")
+        render("users/new")
       end
-    else
-      render("users/new")
-    end
   end
 
   def edit
@@ -97,5 +96,29 @@ class UsersController < ApplicationController
     session[:user_id] = nil
     flash[:notice] = "ログアウトしました"
     redirect_to("/login")
+  end
+
+  def only_owner
+      if @current_user.authority == 1
+          flash[:notice] = "オーナーである必要があります。"
+          redirect_to("/users/#{@current_user.id}")
+      end
+  end
+
+  def only_my_user_show_page
+      if @current_user.authority == 1
+          if params[:id].to_i != @current_user.id
+              flash[:notice] = "他のユーザーの情報は閲覧できません。"
+              redirect_to("/users/#{@current_user.id}")
+          end
+      end
+  end
+
+  def forbid_login_user
+      if @current_user 
+      flash[:notice] = "すでにログインしています"
+      redirect_to("/users/#{@current_user.id}")
+      end
+    end
   end
 end

@@ -6,14 +6,12 @@
       <div class="users-index-item">
           <div class="content">
                 <p class="name"><%= link_to(user.name, "/users/#{user.id}") %></p>
-                <% st_time = user.post&.start_time %>
-                <% fn_time = user.post&.finish_time %>
+                <% time_set(user.post) %>
                 <% if st_time == nil && fn_time == nil %>
                 <p>勤怠記録がありません。</p>
                 <%else%>
-                <% st_num = st_time&.strftime("%w").to_i %>
-                <P><%= st_time&.strftime("%Y/%m/%d(#{@weeks[st_num]})") %></p>
-                <p>勤怠:<%= st_time&.strftime("%H:%M") %>〜<%= fn_time&.strftime("%H:%M") %></p>
+                <P><%= @st_time&.strftime("%Y/%m/%d(#{@weeks[@st_time.st_num_set]})") %></p>
+                <p>勤怠:<%= @st_time&.strftime("%H:%M") %>〜<%= @fn_time&.strftime("%H:%M") %></p>
                 <p>勤務時間:<%= user.post&.working_hour_set %><P>
                 <%post = user.post%>
                 <%if post.finish_time == nil %>
@@ -22,12 +20,12 @@
 
                   <% working_second = post.working_second_set %>
                   <% if 21600 < working_second && working_second < 28800 %>
-                      <%if post.break_time == nil || (post.break_time * 60) < 2700 %>
+                      <%if overwork_terms_set(post.break_time) < 2700 %>
                           <p class="alert_mark">過労</p>
                       <% end %>
                   <% end %>
                   <%if working_second > 28800 %>
-                      <%if post.break_time == nil || (post.break_time. * 60) < 3600 %>
+                      <%if overwork_terms_set(post.break_time) < 3600 %>
                           <p class="alert_mark">過労</p>
                       <%end %>
                   <% end %>
